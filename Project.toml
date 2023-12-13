@@ -1,0 +1,13 @@
+name = "LerchOpenField"
+uuid = "19e3f145-597a-4eaa-96c1-306c9a9f5f57"
+authors = ["Dario"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.8"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
