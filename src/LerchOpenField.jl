@@ -6,11 +6,19 @@ Some lazer files might have been restarted multiple times and need to be correct
 using Reexport
 @reexport using DataFrames, CSV, BrowseTables, Dates, CategoricalArrays, StatsBase
 @reexport using MixedModels, StandardizedPredictors
+@reexport using CairoMakie, AlgebraOfGraphics
+
 import MixedModels: term, lrtest
 include(joinpath("PreprocessTables","LoadFiles.jl"))
 include(joinpath("PreprocessTables","ProcessOF.jl"))
 include(joinpath("PreprocessTables","ProcessLZR.jl"))
 include(joinpath("PreprocessTables","ProcessSession.jl"))
+include(joinpath("PreprocessTables","Genotype.jl"))
+
+include(joinpath("Analysis","MovementFunctions.jl"))
+include(joinpath("Analysis","RedefinePeriods.jl"))
+
+
 
 
 
@@ -22,6 +30,7 @@ else
     error("main path for data not found")
 end
 
-export main_path, read_database, read_of, detect_blink, adjust_of, adjust_lzr, process_session, checkframecounter!
+export main_path, read_database, read_of, detect_blink, checkframecounter!, adjust_of, adjust_lzr, process_session, genotypes
+export distance, shift_run_period, adjustperiods!
 
 end

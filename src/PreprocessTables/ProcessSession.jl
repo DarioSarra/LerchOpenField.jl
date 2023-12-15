@@ -27,6 +27,7 @@ function process_session(df_row::DataFrameRow)
     end
     df = leftjoin(lzr_df, of_df, on = :Volume => :Timer)
     df[!,:MouseID] .= string(df_row.MouseID)
+    df[!, :Gene] .= get(genotypes, string(df_row.MouseID), missing)
     return df
 end
 
