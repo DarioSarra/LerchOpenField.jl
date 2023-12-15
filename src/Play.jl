@@ -21,6 +21,8 @@ end
 
 ##
 f_of = LerchOpenField.read_of(file_df[i,:OF])
+nrow(f_of)/15
+
 pre_of = subset(f_of, :Blink)
 pre_of[!,:FrameCounter] = pushfirst!(diff(pre_of.Frame),0)
 countmap(pre_of.FrameCounter)
@@ -46,31 +48,46 @@ step = mode(skipmissing(cp_of.FrameCounter))
 =#
 
 ##### this is wrong we need to loop into the blink to make sure we continue correcting the values
+function checkframecounter!(vector, lastblink, step)
+    thisblink = findprev(vector,lastblink-1)
+    dist = lastblink - thisblink
+    if dist > 2*step
+        vector[thisblink] = false
+        thisblink = lastblink - step
+        vector[thisblink] = true
+    elseif dist < step/2
+        vector[thisblink] = false
+        nextblink = findprev(vector,thisblink-1)
+        if lastblink - nextblink > 2*step
+            thisblink = lastblink - step
+            vector[thisblink] = true
+        else
+            thisblink = nextblink
+        end
+    end
+    return thisblink
+end
 function fix_short_of(lzr_df, f_of)
     cp_of, start_idx = detect_blink(f_of)
+    step = mode(skipmissing(cp_of.FrameCounter))
     lastblink = 0
     thisblink = 0
     for idx in nrow(lzr_df):-1:1
         println(idx)
         if idx == nrow(lzr_df)
-            thisblink = findlast(cp_of.Blink)
-            lastblink = nrow(cp_of)
+            lastblink = findprev(cp_of.Blink,findlast(cp_of.Blink)-1)
+            continue
         elseif idx == 1
             cp_of[1:lastblink - 1,:Blink] .= false
             break
         else
-            thisblink = findprev(cp_of.Blink, lastblink)
+            lastblink = checkframecounter!(cp_of.Blink, lastblink, step)
         end
-
-        if cp_of[thisblink, :FrameCounter] > step * 2
-            cp_of[lastblink - step,:Blink] = true
-        elseif cp_of[thisblink, :FrameCounter] < step / 2
-            cp_of[thisblink,:Blink] = false
-        end
-        lastblink = thisblink
     end
     return cp_of
 end
 
 cp_of = fix_short_of(lzr_df, f_of)
+cp_of, start_idx = detect_blink(f_of)
 open_html_table(cp_of)
+

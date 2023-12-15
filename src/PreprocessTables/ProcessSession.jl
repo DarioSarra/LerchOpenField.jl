@@ -16,7 +16,13 @@ function process_session(df_row::DataFrameRow)
             println("1 extra counter in LZR, proceeding removing last values")
             lzr_df = lzr_df[1:end-1,:]
         else
-            error("unknown condition: LZR rows = $(nrow(lzr_df)), OF rows = $(nrow(of_df))")
+            # error("unknown condition: LZR rows = $(nrow(lzr_df)), OF rows = $(nrow(of_df))")
+            println("attempting inferring blinks: LZR rows = $(nrow(lzr_df)), OF rows = $(nrow(of_df))")
+            cp_of = fix_short_of(lzr_df, read_of(df_row))
+            start_idx = findfirst(cp_of.Blink)
+            cp_of = cp_of[start_idx:end,:];
+            transform!(cp_of, :Blink => cumsum => :Timer)
+            of_df = combine(groupby(cp_of, :Timer), :X => mean => :X, :Y => mean => :Y)
         end
     end
     df = leftjoin(lzr_df, of_df, on = :Volume => :Timer)

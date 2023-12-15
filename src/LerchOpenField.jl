@@ -22,6 +22,6 @@ else
     error("main path for data not found")
 end
 
-export main_path, read_database, read_of, detect_blink, adjust_of, adjust_lzr, process_session
+export main_path, read_database, read_of, detect_blink, adjust_of, adjust_lzr, process_session, checkframecounter!
 
 end
