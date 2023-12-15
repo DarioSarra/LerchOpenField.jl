@@ -28,10 +28,10 @@ transform!(df2, [:Speed_cm, :Speed_sem] => ByRow((m,s) -> m+s) => :Upper)
 
 plt = data(df2) * mapping(:Period, :Speed_cm; linestyle = :Gene, marker = :Gene,
     color = :RunState => renamer([1 => "PreStim", 2 => "Stim", 3 => "PostStim"]) => "StimState") 
-layers = smooth() + visual(Scatter)
-fg = draw(layers * plt)
+layers = smooth() + (visual(Scatter) + mapping(:Period,:Speed_sem) * visual(Errorbars))
+fg = draw(layers * plt, axis = (; limits = (nothing,nothing,0,4)))
 
-save("firstResuts.png", fg, px_per_unit = 3)
+save("firstResuts_witherror.png", fg, px_per_unit = 3)
 ## debug
 i = 9
 file_df[i,:]
