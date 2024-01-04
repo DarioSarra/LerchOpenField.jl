@@ -31,6 +31,6 @@ else
 end
 
 export main_path, read_database, read_of, detect_blink, checkframecounter!, adjust_of, adjust_lzr, process_session, genotypes
-export distance, shift_run_period, adjustperiods!
+export distance, baseline_speed, shift_run_period, adjustperiods!
 
 end
